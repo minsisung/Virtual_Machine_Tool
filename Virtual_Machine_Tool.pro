@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
+LIBS += -lopengl32
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,11 +26,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        creategemoetry.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        myopenglwidget.cpp \
+        readgcode.cpp
 
 HEADERS += \
-        mainwindow.h
+        creategemoetry.h \
+        mainwindow.h \
+        myopenglwidget.h \
+        readgcode.h \
+        shaders.h
 
 FORMS += \
         mainwindow.ui
