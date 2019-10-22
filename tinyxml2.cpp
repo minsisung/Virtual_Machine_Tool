@@ -2202,7 +2202,7 @@ XMLUnknown* XMLDocument::NewUnknown( const char* str )
 
 static FILE* callfopen( const char* filepath, const char* mode )
 {
-    TIXMLASSERT( filepath );
+    TIXMLASSERT( filepath )
     TIXMLASSERT( mode );
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 ) && (!defined WINCE)
     FILE* fp = 0;
@@ -2217,7 +2217,7 @@ static FILE* callfopen( const char* filepath, const char* mode )
 }
 
 void XMLDocument::DeleteNode( XMLNode* node )	{
-    TIXMLASSERT( node );
+    TIXMLASSERT( node )
     TIXMLASSERT(node->_document == this );
     if (node->_parent) {
         node->_parent->DeleteChild( node );
@@ -2237,7 +2237,7 @@ void XMLDocument::DeleteNode( XMLNode* node )	{
 XMLError XMLDocument::LoadFile( const char* filename )
 {
     if ( !filename ) {
-        TIXMLASSERT( false );
+        TIXMLASSERT( false )
         SetError( XML_ERROR_FILE_COULD_NOT_BE_OPENED, 0, "filename=<null>" );
         return _errorID;
     }

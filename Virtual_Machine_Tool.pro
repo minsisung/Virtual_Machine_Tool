@@ -31,7 +31,8 @@ SOURCES += \
         mainwindow.cpp \
         myopenglwidget.cpp \
         readgcode.cpp \
-    tinyxml2.cpp
+    tinyxml2.cpp \
+    urdfparser.cpp
 
 HEADERS += \
         creategemoetry.h \
@@ -39,7 +40,8 @@ HEADERS += \
         myopenglwidget.h \
         readgcode.h \
         shaders.h \
-        tinyxml2.h
+        tinyxml2.h \
+        urdfparser.h
 
 FORMS += \
         mainwindow.ui
