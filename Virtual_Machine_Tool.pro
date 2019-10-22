@@ -30,14 +30,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         myopenglwidget.cpp \
-        readgcode.cpp
+        readgcode.cpp \
+    tinyxml2.cpp
 
 HEADERS += \
         creategemoetry.h \
         mainwindow.h \
         myopenglwidget.h \
         readgcode.h \
-        shaders.h
+        shaders.h \
+        tinyxml2.h
 
 FORMS += \
         mainwindow.ui

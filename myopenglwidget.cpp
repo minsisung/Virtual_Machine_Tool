@@ -147,7 +147,6 @@ void MyOpenGLWidget::initializeGL()
     initializeOpenGLFunctions();
     glClearColor(0.3f, 0.3f, 0.3f, m_transparent ? 0 : 1);
 
-
     motionForEachAxis<<moveX<<moveY<<moveZ<<moveA<<moveB<<moveC;
 
     ////    RT!!!!!!!
