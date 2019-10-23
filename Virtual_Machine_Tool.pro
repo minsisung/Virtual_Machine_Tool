@@ -27,6 +27,8 @@ CONFIG += c++11
 
 SOURCES += \
         creategemoetry.cpp \
+    joint.cpp \
+    link.cpp \
         main.cpp \
         mainwindow.cpp \
         myopenglwidget.cpp \
@@ -36,6 +38,8 @@ SOURCES += \
 
 HEADERS += \
         creategemoetry.h \
+        joint.h \
+        link.h \
         mainwindow.h \
         myopenglwidget.h \
         readgcode.h \

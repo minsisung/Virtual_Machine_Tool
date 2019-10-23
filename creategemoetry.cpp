@@ -4,7 +4,7 @@
 #include<qdebug.h>
 #include<assert.h>
 
-CreateGemoetry::CreateGemoetry()    :
+CreateGemoetry::CreateGemoetry():
     m_totalCount(0),
 
     min_x(1000000),max_x(-1000000),

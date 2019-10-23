@@ -1,6 +1,9 @@
 #include "urdfparser.h"
 #include "tinyxml2.h"
 #include <iostream>
+#include "joint.h"
+#include "link.h"
+
 using namespace tinyxml2;
 using namespace std;
 
@@ -30,14 +33,22 @@ int readURDF(const char* filename){
                 continue;
             }
 
+
+
             XMLElement *origin = visual->FirstChildElement("origin");
             const XMLAttribute *xyz = origin->FirstAttribute();
             const XMLAttribute *rpy = xyz->Next();
             cout  << xyz->Name() << ":" << xyz->Value() << endl;
-            cout  << rpy->Name() << ":" << rpy->Value() << endl<<endl;
+            cout  << rpy->Name() << ":" << rpy->Value() << endl;
+
+            XMLElement *geometry = visual->FirstChildElement("geometry");
+            XMLElement *mesh = geometry->FirstChildElement("mesh");
+            const XMLAttribute *fileName = mesh->FirstAttribute();
+            cout << fileName->Name() << ":" << fileName->Value() << endl << endl;
 
             link = link->NextSiblingElement("link");  //move to next sibling element
         }
+
 
         XMLElement *joint = robot->FirstChildElement("joint");
         while (joint)
@@ -57,9 +68,10 @@ int readURDF(const char* filename){
                 continue;
             }
 
-            XMLElement *parent_link = joint->FirstChildElement("parent");
-            XMLElement *child_link = joint->FirstChildElement("child");
-            XMLElement *axis = joint->FirstChildElement("axis");
+            XMLElement *parent_link = joint->FirstChildElement("parent");  //parent link
+            XMLElement *child_link = joint->FirstChildElement("child");    //child link
+            XMLElement *axis = joint->FirstChildElement("axis");           //axis
+            XMLElement *limit = joint->FirstChildElement("limit");         //limit
 
             const XMLAttribute *xyz = origin->FirstAttribute();
             const XMLAttribute *rpy = xyz->Next();
@@ -70,10 +82,14 @@ int readURDF(const char* filename){
             const XMLAttribute *parent = parent_link->FirstAttribute();
             const XMLAttribute *child = child_link->FirstAttribute();
             const XMLAttribute *axisAttribute = axis->FirstAttribute();
+            const XMLAttribute *limit_lower = limit->FirstAttribute();   //lower limit
+            const XMLAttribute *limit_upper = limit_lower->Next();       //upper limit
 
-            cout << "parent_"<< parent->Name() << ":" << parent->Value() << endl;
-            cout << "child_"<< child->Name() << ":" << child->Value() << endl;
-            cout << axisAttribute->Name() << ":" << axisAttribute->Value() << endl<<endl;
+            cout << "parent_" << parent->Name() << ":" << parent->Value() << endl;
+            cout << "child_" << child->Name() << ":" << child->Value() << endl;
+            cout << "axis_" << axisAttribute->Name() << ":" << axisAttribute->Value() << endl;
+            cout << limit_lower->Name() << "_limit :" << limit_lower->Value() << endl;
+            cout << limit_upper->Name() << "_limit:" << limit_upper->Value() << endl << endl;
 
             joint = joint->NextSiblingElement("joint");  //move to next sibling element
         }

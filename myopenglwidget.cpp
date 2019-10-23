@@ -16,7 +16,6 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent)
       m_program(nullptr), m_color(1.0,1.0,1.0),startNubmer(0),
       moveX(0),moveY(0),moveA(0),moveB(0),moveC(0),moveZ(0),
       fov(45.0f),count_nc_line(0)
-
 {
     setFocusPolicy( Qt::StrongFocus ); //This property holds the way the widget accepts keyboard focus
 

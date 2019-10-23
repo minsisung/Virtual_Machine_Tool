@@ -8,6 +8,7 @@
 #include <QVector3D>
 #include <qopengl.h>
 #include <QDebug>
+#include<assert.h>
 
 
 
