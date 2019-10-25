@@ -16,10 +16,9 @@ Link* find_link(std::string linkName, QVector<Link> &myVector){               //
         if(loop->getName()== linkName)
             return loop;
     }
-    assert (nullptr);   //assert  can not find the name
+    assert (true);   //assert  can not find the name
     return nullptr;
 }
-
 
 int readURDF(const char* filename){
     XMLDocument doc;
@@ -62,7 +61,6 @@ int readURDF(const char* filename){
         Vector3 rpy_input;
         rpy_input.init(rpy->Value());
 
-
         XMLElement *geometry = visual->FirstChildElement("geometry");
         XMLElement *mesh = geometry->FirstChildElement("mesh");
         const XMLAttribute *fileName = mesh->FirstAttribute();
@@ -74,7 +72,6 @@ int readURDF(const char* filename){
         link_count = link_count->NextSiblingElement("link");                  //move to next sibling element
     }
 
-
     for (QVector<Link>::iterator loop = LinkVector.begin();loop != LinkVector.end(); loop++)        //print out all links information
     {
         cout <<"Name of the link: "<<loop->getName()<<endl;
@@ -83,9 +80,7 @@ int readURDF(const char* filename){
         cout <<"file path:"<<loop->getMeshFile()<<endl;
         cout <<"address of the link: "<<loop<<endl<<endl;
     }
-
     cout<<endl;
-
 
     XMLElement *joint = robot->FirstChildElement("joint");
 
@@ -94,16 +89,18 @@ int readURDF(const char* filename){
     cout << "joint " << endl;
     while (joint)
     {
-
         const XMLAttribute *nameOfJoint = joint->FirstAttribute();
         const XMLAttribute *typeOfJoint = joint->FirstAttribute()->Next();
-        //        cout << nameOfJoint->Name() << ":" << nameOfJoint->Value() << endl;
-        //        cout << typeOfJoint->Name() << ":" << typeOfJoint->Value() << endl;
+        XMLElement *parent_link = joint->FirstChildElement("parent");  //parent link
+        XMLElement *child_link = joint->FirstChildElement("child");    //child link
+        const XMLAttribute *parent = parent_link->FirstAttribute();
+        const XMLAttribute *child = child_link->FirstAttribute();
 
         XMLElement *origin = joint->FirstChildElement("origin");
         if (origin == nullptr)                                              //for some joint without origin element
         {
-            Joint joint_reading(nameOfJoint->Value(), typeOfJoint->Value());
+            Joint joint_reading(nameOfJoint->Value(), typeOfJoint->Value(),
+                                find_link(parent->Value(),LinkVector),find_link(child->Value(),LinkVector));
             JointVector.push_back(joint_reading);                           //push into the joint vector
 
             joint = joint->NextSiblingElement("joint");
@@ -111,14 +108,8 @@ int readURDF(const char* filename){
             continue;
         }
 
-        XMLElement *parent_link = joint->FirstChildElement("parent");  //parent link
-        XMLElement *child_link = joint->FirstChildElement("child");    //child link
-        XMLElement *axis = joint->FirstChildElement("axis");           //axis
-        XMLElement *limit = joint->FirstChildElement("limit");         //limit
-
         const XMLAttribute *xyz = origin->FirstAttribute();
         const XMLAttribute *rpy = xyz->Next();
-
 
         Vector3 xyz_input;
         xyz_input.init(xyz->Value());
@@ -127,11 +118,11 @@ int readURDF(const char* filename){
         rpy_input.init(rpy->Value());
 
 
-        const XMLAttribute *parent = parent_link->FirstAttribute();
-        const XMLAttribute *child = child_link->FirstAttribute();
+        XMLElement *axis = joint->FirstChildElement("axis");           //axis
         const XMLAttribute *axisAttribute = axis->FirstAttribute();
-        const XMLAttribute *limit_lower = limit->FirstAttribute();   //lower limit
-        const XMLAttribute *limit_upper = limit_lower->Next();       //upper limit
+        //        XMLElement *limit = joint->FirstChildElement("limit");                    //limit   (do it later)
+        //        const XMLAttribute *limit_lower = limit->FirstAttribute();   //lower limit
+        //        const XMLAttribute *limit_upper = limit_lower->Next();       //upper limit
 
 
         Vector3 axis_input;
@@ -154,8 +145,8 @@ int readURDF(const char* filename){
         cout <<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
         cout <<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
         cout <<"axis: "<<loop->getAxis().x<<" "<<loop->getAxis().y<<" "<<loop->getAxis().z<<" "<<endl;
-        //        cout <<"Parent Link Name: "<< loop->getParentLink()->getName()<<" "<< "Parent Link Address: "<<loop->getParentLink()<<endl;
-        //        cout <<" Child Link Name: "<< loop->getChildLink()->getName()<<" "<<" Child Link Address: "<< loop->getChildLink()<<endl<<endl;
+        cout <<"Parent Link Name: "<< loop->getParentLink()->getName()<<" "<< "Parent Link Address: "<<loop->getParentLink()<<endl;
+        cout <<"Child Link Name: "<< loop->getChildLink()->getName()<<" "<<" Child Link Address: "<< loop->getChildLink()<<endl<<endl;
     }
 
     return 0;

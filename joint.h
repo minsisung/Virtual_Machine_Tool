@@ -20,7 +20,7 @@ private:
 
 public:
     Joint();            //constructor
-    Joint(std::string name , std::string type);
+    Joint(std::string name , std::string type,Link *parent_link,  Link *child_link);
     Joint(std::string name,std::string type, Vector3 origin_xyz,Vector3 origin_rpy, Vector3 axis,
         Link *parent_link,  Link *child_link);
     ~Joint(){}
