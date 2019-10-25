@@ -2,20 +2,26 @@
 #define LINK_H
 #include <string>
 #include <QVector3D>
+#include <vector3.h>
 
 class Link
 {
 private:
       std::string m_name;
-      QVector3D m_origin;
-      const char* m_meshfile;
+      Vector3 m_origin_xyz;
+      Vector3 m_origin_rpy;
+      std::string m_meshfile;
 
 public:
-    Link();
-    void setOrigin(const QVector3D);
-    void setMeshfile(const char*);
-    QVector3D getOrigin() {return m_origin;}
-    char getMeshFile() {return *m_meshfile;}
+    Link();             //constructor
+    Link(std::string name);
+    Link(std::string name, Vector3 origin_xyz,Vector3 origin_rpy, std::string meshfile);
+    ~Link(){}
+
+    Vector3 getOrigin_xyz() {return m_origin_xyz;}
+    Vector3 getOrigin_rpy() {return m_origin_rpy;}
+    std::string getMeshFile() {return m_meshfile;}
+    std::string getName() {return m_name;}
 };
 
 #endif // LINK_H

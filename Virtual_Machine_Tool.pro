@@ -45,7 +45,8 @@ HEADERS += \
         readgcode.h \
         shaders.h \
         tinyxml2.h \
-        urdfparser.h
+        urdfparser.h \
+        vector3.h
 
 FORMS += \
         mainwindow.ui

@@ -1,17 +1,12 @@
 #include "link.h"
 
-Link::Link():m_origin(0,0,0), m_meshfile(nullptr){}
+Link::Link(){}
+Link::Link(std::string name):m_name(name){}
+     //constructor
+Link::Link(std::string name, Vector3 origin_xyz,Vector3 origin_rpy, std::string meshfile):
+    m_name(name),m_origin_xyz(origin_xyz), m_origin_rpy(origin_rpy),m_meshfile(meshfile) {}
 
-void Link::setOrigin(const QVector3D origin)
-{
- m_origin.setX( origin.x());
- m_origin.setY( origin.y());
- m_origin.setZ( origin.z());
 
-}
-
-void Link::setMeshfile(const char * meshfile)
-{
-m_meshfile = meshfile;
-}
-
+Vector3 axis;
+Link *m_parent_link;
+Link *m_child_link;
