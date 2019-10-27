@@ -29,23 +29,25 @@ SOURCES += \
         creategemoetry.cpp \
     joint.cpp \
     link.cpp \
+    machineTool.cpp \
         main.cpp \
         mainwindow.cpp \
         myopenglwidget.cpp \
         readgcode.cpp \
-    tinyxml2.cpp \
-    urdfparser.cpp
+    test.cpp \
+    tinyxml2.cpp
 
 HEADERS += \
         creategemoetry.h \
         joint.h \
         link.h \
+        machineTool.h \
         mainwindow.h \
         myopenglwidget.h \
         readgcode.h \
         shaders.h \
+        test.h \
         tinyxml2.h \
-        urdfparser.h \
         vector3.h
 
 FORMS += \

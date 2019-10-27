@@ -1,4 +1,4 @@
-#include "urdfparser.h"
+#include "machineTool.h"
 #include "tinyxml2.h"
 #include <iostream>
 #include "joint.h"
@@ -9,7 +9,10 @@
 using namespace tinyxml2;
 using namespace std;
 
-Link* find_link(std::string linkName, QVector<Link> &myVector){               //The function to find the link for joint and return a pointer
+MachineTool::MachineTool(){}
+
+
+Link* MachineTool::find_link(std::string linkName, QVector<Link> &myVector){               //The function to find the link for joint and return a pointer
 
     for (QVector<Link>::iterator loop = myVector.begin();loop != myVector.end(); loop++)
     {
@@ -20,7 +23,7 @@ Link* find_link(std::string linkName, QVector<Link> &myVector){               //
     return nullptr;
 }
 
-int readURDF(const char* filename){
+int MachineTool::readURDF(const char* filename){
     XMLDocument doc;
     int res = doc.LoadFile(filename);
 
