@@ -5,6 +5,7 @@
 #include <qopengl.h>
 #include <QVector>
 #include <QVector3D>
+#include <link.h>
 
 class CreateGemoetry
 {
@@ -30,6 +31,7 @@ public:
     float getZ_avg() const {return (max_z+min_z)/2;}
 
     void readSTL(QString part, QString path);
+    void URDFreadSTL(QString filepath, Link* link);
 
 
 
@@ -39,14 +41,15 @@ private:
 
     QVector<GLfloat> m_data;
     int m_totalCount;
-    int m_totalCount_BASE =0;
-    int m_totalCount_X =0;
-    int m_totalCount_Y =0;
-    int m_totalCount_Z =0;
-    int m_totalCount_A =0;
-    int m_totalCount_B =0;
-    int m_totalCount_C =0;
-    int m_totalCount_SPINDLE =0;
+    int m_totalCount_BASE = 0;
+    int m_totalCount_X = 0;
+    int m_totalCount_Y = 0;
+    int m_totalCount_Z = 0;
+    int m_totalCount_A = 0;
+    int m_totalCount_B = 0;
+    int m_totalCount_C = 0;
+    int m_totalCount_SPINDLE = 0;
+    int m_totalCountForURDFLink = 0;
     float min_x;
     float max_x;
     float min_y;

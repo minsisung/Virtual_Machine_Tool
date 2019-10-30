@@ -32,6 +32,7 @@ SOURCES += \
     machineTool.cpp \
         main.cpp \
         mainwindow.cpp \
+    modelloader.cpp \
         myopenglwidget.cpp \
         readgcode.cpp \
     test.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
         link.h \
         machineTool.h \
         mainwindow.h \
+        modelloader.h \
         myopenglwidget.h \
         readgcode.h \
         shaders.h \
@@ -57,3 +59,10 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+win32: LIBS += -L$$PWD/lib/ -lassimp-vc140-mt
+
+
+INCLUDEPATH += C:\Users\simon\Dropbox\QT_Git\Virtual_Machine_Tool\include
+INCLUDEPATH += $$PWD/include
+DEPENDPATH += $$PWD/include

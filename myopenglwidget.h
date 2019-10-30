@@ -11,6 +11,7 @@
 #include <readgcode.h>
 #include <QKeyEvent>
 #include <QBasicTimer>
+#include <machineTool.h>
 
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
@@ -55,6 +56,7 @@ protected:
     //supplied with the new width and height.
 
     void createObject(QVector<QString> structureOrder,QVector<float> motionForEachAxis);
+    void createURDFObject();
     void moveComponent(const QVector<GLfloat> data, int count);   //need to use pass by reference
 
     void mousePressEvent(QMouseEvent *event) override;
@@ -67,6 +69,7 @@ protected:
 private:
     void setupVertexAttribs();
 
+    MachineTool MT;
     bool m_core;
     int m_xRot;
     int m_yRot;

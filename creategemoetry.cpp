@@ -4,6 +4,7 @@
 #include<qdebug.h>
 #include<assert.h>
 
+
 CreateGemoetry::CreateGemoetry():
     m_totalCount(0),
 
@@ -19,9 +20,9 @@ void CreateGemoetry::add(const QVector3D &v, const QVector3D &n)
 {
     m_data.resize(m_totalCount+6);
     GLfloat *p = m_data.data() + m_totalCount;
-    *p++ = v.x();
-    *p++ = v.y();
-    *p++ = v.z();
+    *p++ = 1000*v.x();
+    *p++ = 1000*v.y();
+    *p++ = 1000*v.z();
     *p++ = n.x();
     *p++ = n.y();
     *p++ = n.z();
@@ -52,7 +53,6 @@ void CreateGemoetry::readSTL(QString part, QString filepath)
     inputFile.open(QIODevice::ReadOnly);
     assert (inputFile.isOpen());   //assert the file can not be opened
     QTextStream stream(&inputFile);
-
 
     do {
         line = stream.readLine();
@@ -92,6 +92,7 @@ void CreateGemoetry::readSTL(QString part, QString filepath)
 
             tri(x1,y1,z1,x2,y2,z2,x3,y3,z3,nx,ny,nz);
 
+
             switch(myParts.indexOf(part))
             {
             case 0: //Base
@@ -126,14 +127,84 @@ void CreateGemoetry::readSTL(QString part, QString filepath)
                 m_totalCount_SPINDLE+=3;
                 break;
             }
-            //qDebug()<<m_data.size();
-            //qDebug()<<nx<<""<<ny<<""<<nz;
-            //qDebug()<<x1<<""<<y1<<""<<z1;
-            //qDebug()<<x2<<""<<y2<<""<<z2;
-            //qDebug()<<x3<<""<<y3<<""<<z3;
+            //            qDebug()<<m_data.size();
+            //            qDebug()<<nx<<""<<ny<<""<<nz;
+            //            qDebug()<<x1<<""<<y1<<""<<z1;
+            //            qDebug()<<x2<<""<<y2<<""<<z2;
+            //            qDebug()<<x3<<""<<y3<<""<<z3;
 
         }
     } while(!line.isNull());
+    inputFile.close();
+}
+
+void CreateGemoetry::URDFreadSTL(QString filepath, Link* link)
+{
+    GLfloat x1{0};
+    GLfloat y1{0};
+    GLfloat z1{0};
+    GLfloat x2{0};
+    GLfloat y2{0};
+    GLfloat z2{0};
+    GLfloat x3{0};
+    GLfloat y3{0};
+    GLfloat z3{0};
+    GLfloat nx{0};
+    GLfloat ny{0};
+    GLfloat nz{0};
+
+    QString line;
+    QString short_line;
+    QStringList s;
+    QString srch;
+
+    QFile inputFile(filepath);
+    inputFile.open(QIODevice::ReadOnly);
+    assert (inputFile.isOpen());   //assert the file can not be opened
+    QTextStream stream(&inputFile);
+
+    do {
+        line = stream.readLine();
+        if( line.contains( "facet normal" ))
+        {
+            short_line = line.mid(16);
+            s = short_line.split(" ");
+            nx=s.at(0).toFloat();            // not accurate
+            ny=s.at(1).toFloat();
+            nz=s.at(2).toFloat();
+        }
+        if ( line.contains( "vertex" ))
+        {
+            short_line = line.mid(16);                          // STILL HAS PROBLEM HERE
+            s = short_line.split(" ");
+            x1=s.at(0).toFloat();            // not accurate
+            y1=s.at(1).toFloat();
+            z1=s.at(2).toFloat();
+
+            line = stream.readLine(); // go next line
+            short_line = line.mid(16);
+            s = short_line.split(" ");
+            x2=s.at(0).toFloat();            // not accurate
+            y2=s.at(1).toFloat();
+            z2=s.at(2).toFloat();
+
+            line = stream.readLine(); // go next line
+            short_line = line.mid(16);
+            s = short_line.split(" ");
+            x3=s.at(0).toFloat();            // not accurate
+            y3=s.at(1).toFloat();
+            z3=s.at(2).toFloat();
+
+            tri(x1,y1,z1,x2,y2,z2,x3,y3,z3,nx,ny,nz);
+            m_totalCountForURDFLink +=3;  //count the vertex of the link
+
+//            qDebug()<<x1<<""<<y1<<""<<z1;
+//            qDebug()<<x2<<""<<y2<<""<<z2;
+//            qDebug()<<x3<<""<<y3<<""<<z3;
+        }
+    } while(!line.isNull());
+    link->numberOfVertex = m_totalCountForURDFLink;
+    m_totalCountForURDFLink =0; //set back to zero
     inputFile.close();
 }
 

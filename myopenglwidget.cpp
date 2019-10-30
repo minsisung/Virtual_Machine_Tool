@@ -6,6 +6,10 @@
 #include <shaders.h>
 #include <QtOpenGL>
 #include <qdebug.h>
+#include "machineTool.h"
+#include <iostream>
+
+using namespace std;
 
 bool MyOpenGLWidget::m_transparent = false;
 
@@ -146,77 +150,91 @@ void MyOpenGLWidget::initializeGL()
     initializeOpenGLFunctions();
     glClearColor(0.3f, 0.3f, 0.3f, m_transparent ? 0 : 1);
 
-    motionForEachAxis<<moveX<<moveY<<moveZ<<moveA<<moveB<<moveC;
 
-    ////    RT!!!!!!!
-    //        structureOrder<<"BASE"<<"Y"<<"X"<<"A"<<"C"<<"Z"<<"SPINDLE";
-
-    //        stlFileOrder<<"C:/Files_For_QT/TMV-710/TMV-710A - Base-1.stl"<<"C:/Files_For_QT/TMV-710/TMV-710A - Y-1.stl"
-    //                <<"C:/Files_For_QT/TMV-710/TMV-710A - X-1.stl"<<"C:/Files_For_QT/TMV-710/TMV-710A - A-1.stl"
-    //                <<"C:/Files_For_QT/TMV-710/TMV-710A - C-1.stl"<<"C:/Files_For_QT/TMV-710/TMV-710A - Z-1.stl"
-    //                <<"C:/Files_For_QT/TMV-710/TMV-710A - SPINDLE-1.stl";
+    //create machine tool
+    MT.readURDF("umc500_report3.urdf");
 
 
-    //    [HAAS VF-2TR] (RT)!!!!!!!
-    structureOrder<<"BASE"<<"Y"<<"X"<<"X"<<"A"<<"C"<<"Z";
+    //    cout<<"LINKS: "<<endl;
+    //    for (QVector<Link>::iterator loop = MT.LinkVector.begin();loop != MT.LinkVector.end(); loop++)        //print out all links information
+    //    {
+    //        cout <<"Name of the link: "<<loop->getName()<<endl;
+    //        cout <<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
+    //        cout <<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
+    //        cout <<"STL file Name:"<<loop->getMeshFile()<<endl;
+    //        cout <<"address of the link: "<<loop<<endl<<endl;
+    //    }
 
-    stlFileOrder<<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_BASE_LG-1.stl"<<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_Y_LG-1.stl"
-               <<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_X_LG-1.stl" <<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_X_DG-1.stl"
-              <<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_A_LG-1.stl"<<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_C_DG-1.stl"
-             <<"C:/Files_For_QT/VF-2TR/VF-2TR_S_XT_2013-08 - VF-2TR_AXES_Z_DG-1.stl";
+    //    cout<<"JOINTS: "<<endl;
+    //    for (QVector<Joint>::iterator loop = MT.JointVector.begin();loop != MT.JointVector.end(); loop++)        //print out all links information
+    //    {
+    //        cout <<"Name of the Joint: "<<loop->getName()<< "  " <<"Type: " <<loop->getType()<<endl;
+    //        cout <<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
+    //        cout <<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
+    //        cout <<"axis: "<<loop->getAxis().x<<" "<<loop->getAxis().y<<" "<<loop->getAxis().z<<" "<<endl;
+    //        cout <<"Parent Link Name: "<< loop->getParentLink()->getName()<<" "<< "Parent Link Address: "<<loop->getParentLink()<<endl;
+    //        cout <<"Child Link Name: "<< loop->getChildLink()->getName()<<" "<<" Child Link Address: "<< loop->getChildLink()<<endl<<endl;
+    //    }
 
-
-    ////    SR!!!!!!
-    //        structureOrder<<"BASE"<<"X"<<"Y"<<"Z"<<"A"<<"B"<<"SPINDLE";
-
-    //        stlFileOrder
-    //                <<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_BASE-1.stl"  <<"C:/Files_For_QT//VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_X-1.stl"
-    //                <<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_Y-1.stl"<<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_Z-1.stl"
-    //                <<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_A-1.stl"<<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_B-1.stl"
-    //                <<"C:/Files_For_QT/VMT_MINSI_WYXAB/VMT_MINSI_WYXAB - WYXAB_SPINDLE-1.stl";
-
-    ////    //HT!!!!!!!
-    //    structureOrder<<"BASE"<<"X"<<"Y"<<"A"<<"Z"<<"B"<<"SPINDLE";
-
-    //    stlFileOrder
-    //            <<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_BASE-1.stl"  <<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_X-1.stl"
-    //           <<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_Y-1.stl"<<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_A-1.stl"
-    //          <<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_Z-1.stl"<<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_B-1.stl"
-    //         <<"C:/Files_For_QT/VMT_MINSI_WAYXB/VMT_MINSI_WAYXB - WAYXB_SPINDLE-1.stl";
+//    motionForEachAxis<<moveX<<moveY<<moveZ<<moveA<<moveB<<moveC;
 
 
+//    //        [HAAS VF-2TR] (RT)!!!!!!!
+//    structureOrder<<"BASE"<<"Y"<<"X"<<"X"<<"A"<<"C"<<"Z";
 
-    qDebug()<<structureOrder;
 
-    for(int i = 0;i<structureOrder.length();++i){
-        if(structureOrder.at(i)=="BASE")
-            m_geometry.readSTL("BASE",stlFileOrder.at(i));
+//    stlFileOrder<<"VF-2TR_S_XT_2013-08 - VF-2TR_BASE_LG-1.stl"<<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_Y_LG-1.stl"
+//               <<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_X_LG-1.stl" <<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_X_DG-1.stl"
+//              <<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_A_LG-1.stl"<<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_C_DG-1.stl"
+//             <<"VF-2TR_S_XT_2013-08 - VF-2TR_AXES_Z_DG-1.stl";
 
-        if(structureOrder.at(i)=="Y")
-            m_geometry.readSTL("Y",stlFileOrder.at(i));
 
-        if(structureOrder.at(i)=="X")
-            m_geometry.readSTL("X",stlFileOrder.at(i));
+    //    structureOrder<<"BASE"<<"X"<<"Y"<<"Z"<<"B"<<"C";
+    //    QVector<Link>::iterator writeout = MT.LinkVector.begin();
+    //    stlFileOrder<<QString::fromStdString((writeout)->getMeshFile())<<QString::fromStdString((writeout+4)->getMeshFile())
+    //               <<QString::fromStdString((writeout+5)->getMeshFile())<<QString::fromStdString((writeout+6)->getMeshFile())
+    //              <<QString::fromStdString((writeout+1)->getMeshFile())<<QString::fromStdString((writeout+2)->getMeshFile());
 
-        if(structureOrder.at(i)=="A")
-            m_geometry.readSTL("A",stlFileOrder.at(i));
 
-        if(structureOrder.at(i)=="B")
-            m_geometry.readSTL("B",stlFileOrder.at(i));
+    //        qDebug()<<stlFileOrder;
+    //        qDebug()<<structureOrder;
 
-        if(structureOrder.at(i)=="C")
-            m_geometry.readSTL("C",stlFileOrder.at(i));
-
-        if(structureOrder.at(i)=="Z")
-            m_geometry.readSTL("Z",stlFileOrder.at(i));
-
-        if(structureOrder.at(i)=="SPINDLE")
-            m_geometry.readSTL("SPINDLE",stlFileOrder.at(i));
+    //    read stl for each link from URDF
+    for (QVector<Link>::iterator loop = MT.LinkVector.begin();loop != MT.LinkVector.end(); loop++)//print out all links information
+    {
+        m_geometry.URDFreadSTL(QString::fromStdString(loop->getMeshFile()),loop);
+        qDebug() <<"Name of the link: "<<QString::fromStdString(loop->getName());
+        qDebug() << "number of the vertex: " << loop->numberOfVertex << endl;
     }
 
-    //read NC Code
-    m_gcode.read("C:/Files_For_QT/TMV-710/trial_Gcode.txt");
+    //            for(int i = 0;i<structureOrder.length();++i){
+    //                if(structureOrder.at(i)=="BASE")
+    //                    m_geometry.readSTL("BASE",stlFileOrder.at(i));
 
+    //                if(structureOrder.at(i)=="Y")
+    //                    m_geometry.readSTL("Y",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="X")
+    //                    m_geometry.readSTL("X",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="A")
+    //                    m_geometry.readSTL("A",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="B")
+    //                    m_geometry.readSTL("B",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="C")
+    //                    m_geometry.readSTL("C",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="Z")
+    //                    m_geometry.readSTL("Z",stlFileOrder.at(i));
+
+    //                if(structureOrder.at(i)=="SPINDLE")
+    //                    m_geometry.readSTL("SPINDLE",stlFileOrder.at(i));
+    //            }
+
+    //        //read NC Code
+    //        m_gcode.read("C:/Files_For_QT/TMV-710/trial_Gcode.txt");
 
     m_program = new QOpenGLShaderProgram;  //shader program object
 
@@ -274,10 +292,6 @@ void MyOpenGLWidget::initializeGL()
 
 void MyOpenGLWidget::paintGL()
 {
-
-    //    deltaTime = timer.restart();
-    //    qDebug()<<deltaTime;
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //clear the widget using the background color and depth information that we defined in the initializeGL() function
     //otherwise we would still see the results from the previous iteration
@@ -299,7 +313,8 @@ void MyOpenGLWidget::paintGL()
     m_camera.translate(m_xTran,m_yTran,m_zTran) ;
 
     //create object               //base->y->x->a->c   //base->z->spindle
-    createObject(structureOrder,motionForEachAxis);
+    //        createObject(structureOrder,motionForEachAxis);
+    createURDFObject();
 
     m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
     //x axis
@@ -347,7 +362,9 @@ void MyOpenGLWidget::paintGL()
     m_program->release();
 }
 
-void MyOpenGLWidget::createObject(QVector<QString> structureOrder,QVector<float> motionForEachAxis)
+
+
+void MyOpenGLWidget::createURDFObject()
 {
     QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
     m_program->bind();
@@ -357,198 +374,42 @@ void MyOpenGLWidget::createObject(QVector<QString> structureOrder,QVector<float>
     //Set new color for the component
     m_program->setUniformValue(m_colorLoc, m_color);
 
-    //    structureOrder<<"BASE"<<"Y"<<"X"<<"A"<<"Z"<<"B"<<"SPINDLE";
-
-
-    for(int i = 0;i<structureOrder.length();++i){
-        if(structureOrder.at(i)=="BASE") //Base
+    //draw each link
+    for (QVector<Joint>::iterator loop = MT.JointVector.begin();loop != MT.JointVector.end(); loop++) //print out all links information
+    {
+        if(loop == MT.JointVector.begin())
         {
             m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
             m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0, m_geometry.totalCount_BASE());
-            startNubmer=m_geometry.totalCount_BASE();
+            glDrawArrays(GL_TRIANGLES, startNubmer, loop->getParentLink()->numberOfVertex);
+            startNubmer += loop->getParentLink()->numberOfVertex;
+            qDebug() << QString::fromStdString(loop->getParentLink()->getName());
+            qDebug() << loop->getParentLink()->numberOfVertex;
+            qDebug()<<startNubmer<<endl;
+
+            m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
+            m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+
+            glDrawArrays(GL_TRIANGLES, startNubmer, loop->getChildLink()->numberOfVertex);
+            startNubmer += loop->getChildLink()->numberOfVertex;
+            qDebug() << QString::fromStdString(loop->getChildLink()->getName());
+            qDebug() << loop->getChildLink()->numberOfVertex;
+            qDebug()<<startNubmer<<endl;
+            continue;
         }
+        m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
+        m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
 
-        if(structureOrder.at(i)=="X") //X
-        {
-            if(structureOrder.at(i-1)!="X")
-            {
-                if(structureOrder.at(i-1)=="BASE")
-                    m_X_Translate = m_world;
+        glDrawArrays(GL_TRIANGLES, startNubmer, loop->getChildLink()->numberOfVertex);
 
-                if(structureOrder.at(i-1)=="Y")
-                    m_X_Translate = m_Y_Translate;
+        startNubmer += loop->getChildLink()->numberOfVertex;
 
-
-                m_X_Translate.translate(motionForEachAxis.at(0),0,0);
-                normalMatrix = m_X_Translate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_X_Translate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_X());
-
-                startNubmer+=m_geometry.totalCount_X();
-            }
-        }
-
-        if(structureOrder.at(i)=="Y") //Y
-        {
-            if(structureOrder.at(i-1)!="Y")
-            {
-                if(structureOrder.at(i-1)=="BASE")
-                    m_Y_Translate = m_world;
-
-                if(structureOrder.at(i-1)=="X")
-                    m_Y_Translate = m_X_Translate;
-
-                m_Y_Translate.translate(0,motionForEachAxis.at(1),0);
-                normalMatrix = m_Y_Translate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_Y_Translate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_Y());
-
-                if(structureOrder.at(i-1)!="Y")
-                    startNubmer+=m_geometry.totalCount_Y();
-            }
-        }
-
-        if(structureOrder.at(i)=="Z") //Z
-        {
-            if(structureOrder.at(i-1)!="Z")
-            {
-                m_Z_Translate.translate(0,0,motionForEachAxis.at(2));
-                normalMatrix = m_Z_Translate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_Z_Translate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_Z());
-
-                if(structureOrder.at(i-1)!="Z")
-                    startNubmer+=m_geometry.totalCount_Z();
-            }
-        }
-
-        if(structureOrder.at(i)=="A") //A
-        {
-            if(structureOrder.at(i-1)!="A")
-            {
-                if(structureOrder.at(i-1)=="X")
-                    m_A_Rotate=m_X_Translate;
-
-                if(structureOrder.at(i-1)=="Y")
-                    m_A_Rotate=m_Y_Translate;
-
-                if(structureOrder.at(i-1)=="Z")
-                    m_A_Rotate=m_Z_Translate;
-
-                if(structureOrder.at(i-1)=="B")
-                    m_A_Rotate=m_B_Rotate;
-
-                if(structureOrder.at(i-1)=="C")
-                    m_A_Rotate=m_C_Rotate;
-
-
-                m_A_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
-                m_A_Rotate.rotate(motionForEachAxis.at(3), 1, 0, 0);
-                m_A_Rotate.translate(0.0f,0.0f,-0.0f);  //translate back to the original center
-
-                normalMatrix = m_A_Rotate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_A_Rotate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_A());
-                startNubmer+=m_geometry.totalCount_A();
-            }
-        }
-
-        if(structureOrder.at(i)=="B") //B
-        {
-            if(structureOrder.at(i-1)!="B")
-            {
-                if(structureOrder.at(i-1)=="X")
-                    m_B_Rotate=m_X_Translate;
-
-                if(structureOrder.at(i-1)=="Y")
-                    m_B_Rotate=m_Y_Translate;
-
-                if(structureOrder.at(i-1)=="Z")
-                    m_B_Rotate=m_Z_Translate;
-
-                if(structureOrder.at(i-1)=="A")
-                    m_B_Rotate=m_A_Rotate;
-
-                if(structureOrder.at(i-1)=="C")
-                    m_B_Rotate=m_C_Rotate;
-
-                m_B_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
-                m_B_Rotate.rotate(motionForEachAxis.at(4), 0, 1, 0);
-                m_B_Rotate.translate(0.0f,0.0f,0.0f);  //translate back to the original center
-
-                normalMatrix = m_B_Rotate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc,m_camera * m_B_Rotate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_B());
-                startNubmer+=m_geometry.totalCount_B();
-            }
-        }
-
-        if(structureOrder.at(i)=="C") //C
-        {
-            if(structureOrder.at(i-1)!="C")
-            {
-                if(structureOrder.at(i-1)=="X")
-                    m_C_Rotate=m_X_Translate;
-
-                if(structureOrder.at(i-1)=="Y")
-                    m_C_Rotate=m_Y_Translate;
-
-                if(structureOrder.at(i-1)=="Z")
-                    m_A_Rotate=m_Z_Translate;
-
-                if(structureOrder.at(i-1)=="A")
-                    m_C_Rotate=m_A_Rotate;
-
-                if(structureOrder.at(i-1)=="B")
-                    m_C_Rotate=m_B_Rotate;
-
-                m_C_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
-                m_C_Rotate.rotate(motionForEachAxis.at(5), 0, 0, 1);
-                m_C_Rotate.translate(0.0f,0.0f,0.0f);  //translate back to the original center
-
-                normalMatrix = m_C_Rotate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc,m_camera * m_C_Rotate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_C());
-                startNubmer+=m_geometry.totalCount_C();
-            }
-        }
-
-        if(structureOrder.at(i)=="SPINDLE") //SPINDLE
-        {
-            if(structureOrder.at(i-1)!="SPINDLE")
-            {
-                if(structureOrder.at(i-1)=="A")
-                    m_SPINDLE_Translate=m_A_Rotate;
-
-                if(structureOrder.at(i-1)=="B")
-                    m_SPINDLE_Translate=m_B_Rotate;
-
-                if(structureOrder.at(i-1)=="Z")
-                    m_SPINDLE_Translate=m_Z_Translate;
-
-
-                normalMatrix = m_SPINDLE_Translate.normalMatrix();
-                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
-                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_SPINDLE_Translate);
-
-                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_SPINDLE());
-            }
-        }
+        qDebug() << QString::fromStdString(loop->getChildLink()->getName());
+        qDebug() << loop->getChildLink()->numberOfVertex;
+        qDebug()<<startNubmer<<endl;
     }
+    startNubmer=0;    //SET BACK TO ZERO
 }
 
 void MyOpenGLWidget::resizeGL(int w, int h)
@@ -562,8 +423,6 @@ void MyOpenGLWidget::resizeGL(int w, int h)
 
 void MyOpenGLWidget::moveComponent(const QVector<GLfloat> data, int count)
 {
-    //    qDebug()<<"count_nc_line"<<count_nc_line;
-    //    qDebug()<<"count"<<count;
     if(count_nc_line<count){
         float x = data[count_nc_line + 0];
         if (x>moveX)
@@ -738,3 +597,215 @@ void MyOpenGLWidget::setupVertexAttribs()  //specified how OpenGL should interpr
     m_geoemtryVbo.release();
 }
 
+void MyOpenGLWidget::createObject(QVector<QString> structureOrder,QVector<float> motionForEachAxis)
+{
+    QOpenGLVertexArrayObject::Binder vaoBinder(&m_vao);
+    m_program->bind();
+    m_program->setUniformValue(m_projMatrixLoc, m_proj);
+    QMatrix3x3 normalMatrix = m_world.normalMatrix();
+
+    //Set new color for the component
+    m_program->setUniformValue(m_colorLoc, m_color);
+
+    for(int i = 0;i<structureOrder.length();++i)
+    {
+        if(structureOrder.at(i)=="BASE") //Base
+        {
+            m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
+            m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+
+            glDrawArrays(GL_TRIANGLES, 0, m_geometry.totalCount_BASE());
+            startNubmer=m_geometry.totalCount_BASE();
+        }
+
+        if(structureOrder.at(i)=="X") //X
+        {
+            if(structureOrder.at(i-1)!="X")
+            {
+                if(structureOrder.at(i-1)=="BASE")
+                    m_X_Translate = m_world;
+
+                if(structureOrder.at(i-1)=="Y")
+                    m_X_Translate = m_Y_Translate;
+
+                m_X_Translate.translate(motionForEachAxis.at(0),0,0);
+                normalMatrix = m_X_Translate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_X_Translate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_X());
+
+                startNubmer+=m_geometry.totalCount_X();
+            }
+        }
+
+        if(structureOrder.at(i)=="Y") //Y
+        {
+            if(structureOrder.at(i-1)!="Y")
+            {
+                if(structureOrder.at(i-1)=="BASE")
+                    m_Y_Translate = m_world;
+
+                if(structureOrder.at(i-1)=="X")
+                    m_Y_Translate = m_X_Translate;
+
+                m_Y_Translate.translate(0,motionForEachAxis.at(1),0);
+                normalMatrix = m_Y_Translate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_Y_Translate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_Y());
+
+                if(structureOrder.at(i-1)!="Y")
+                    startNubmer+=m_geometry.totalCount_Y();
+            }
+        }
+
+        if(structureOrder.at(i)=="Z") //Z
+        {
+            if(structureOrder.at(i-1)!="Z")
+            {
+
+                if(structureOrder.at(i-1)=="X")
+                    m_Z_Translate=m_X_Translate;
+
+                if(structureOrder.at(i-1)=="Y")
+                    m_Z_Translate=m_Y_Translate;
+
+                m_Z_Translate.translate(0,0,motionForEachAxis.at(2));
+                normalMatrix = m_Z_Translate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_Z_Translate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_Z());
+
+                if(structureOrder.at(i-1)!="Z")
+                    startNubmer+=m_geometry.totalCount_Z();
+            }
+        }
+
+        if(structureOrder.at(i)=="A") //A
+        {
+            if(structureOrder.at(i-1)!="A")
+            {
+                if(structureOrder.at(i-1)=="X")
+                    m_A_Rotate=m_X_Translate;
+
+                if(structureOrder.at(i-1)=="Y")
+                    m_A_Rotate=m_Y_Translate;
+
+                if(structureOrder.at(i-1)=="Z")
+                    m_A_Rotate=m_Z_Translate;
+
+                if(structureOrder.at(i-1)=="B")
+                    m_A_Rotate=m_B_Rotate;
+
+                if(structureOrder.at(i-1)=="C")
+                    m_A_Rotate=m_C_Rotate;
+
+                if(structureOrder.at(i-1)=="BASE")
+                    m_A_Rotate = m_world;
+
+                m_A_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
+                m_A_Rotate.rotate(motionForEachAxis.at(3), 1, 0, 0);
+                m_A_Rotate.translate(0.0f,0.0f,-0.0f);  //translate back to the original center
+
+                normalMatrix = m_A_Rotate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_A_Rotate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_A());
+                startNubmer+=m_geometry.totalCount_A();
+            }
+        }
+
+        if(structureOrder.at(i)=="B") //B
+        {
+            if(structureOrder.at(i-1)!="B")
+            {
+                if(structureOrder.at(i-1)=="X")
+                    m_B_Rotate=m_X_Translate;
+
+                if(structureOrder.at(i-1)=="Y")
+                    m_B_Rotate=m_Y_Translate;
+
+                if(structureOrder.at(i-1)=="Z")
+                    m_B_Rotate=m_world;
+
+                if(structureOrder.at(i-1)=="A")
+                    m_B_Rotate=m_A_Rotate;
+
+                if(structureOrder.at(i-1)=="C")
+                    m_B_Rotate=m_C_Rotate;
+
+                if(structureOrder.at(i-1)=="BASE")
+                    m_B_Rotate = m_world;
+
+                m_B_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
+                m_B_Rotate.rotate(motionForEachAxis.at(4), 0, 1, 0);
+                m_B_Rotate.translate(0.0f,0.0f,0.0f);  //translate back to the original center
+
+                normalMatrix = m_B_Rotate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc,m_camera * m_B_Rotate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_B());
+                startNubmer+=m_geometry.totalCount_B();
+            }
+        }
+
+        if(structureOrder.at(i)=="C") //C
+        {
+            if(structureOrder.at(i-1)!="C")
+            {
+                if(structureOrder.at(i-1)=="X")
+                    m_C_Rotate=m_X_Translate;
+
+                if(structureOrder.at(i-1)=="Y")
+                    m_C_Rotate=m_Y_Translate;
+
+                if(structureOrder.at(i-1)=="Z")
+                    m_A_Rotate=m_Z_Translate;
+
+                if(structureOrder.at(i-1)=="A")
+                    m_C_Rotate=m_A_Rotate;
+
+                if(structureOrder.at(i-1)=="B")
+                    m_C_Rotate=m_B_Rotate;
+
+                m_C_Rotate.translate(0.0f,0.0f,0.0f);  //translate the coordinate center to the circle center
+                m_C_Rotate.rotate(motionForEachAxis.at(5), 0, 0, 1);
+                m_C_Rotate.translate(0.0f,0.0f,0.0f);  //translate back to the original center
+
+                normalMatrix = m_C_Rotate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc,m_camera * m_C_Rotate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_C());
+                startNubmer+=m_geometry.totalCount_C();
+            }
+        }
+
+        if(structureOrder.at(i)=="SPINDLE") //SPINDLE
+        {
+            if(structureOrder.at(i-1)!="SPINDLE")
+            {
+                if(structureOrder.at(i-1)=="A")
+                    m_SPINDLE_Translate=m_A_Rotate;
+
+                if(structureOrder.at(i-1)=="B")
+                    m_SPINDLE_Translate=m_B_Rotate;
+
+                if(structureOrder.at(i-1)=="Z")
+                    m_SPINDLE_Translate=m_Z_Translate;
+
+                normalMatrix = m_SPINDLE_Translate.normalMatrix();
+                m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
+                m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_SPINDLE_Translate);
+
+                glDrawArrays(GL_TRIANGLES, startNubmer, m_geometry.totalCount_SPINDLE());
+            }
+        }
+        qDebug()<<startNubmer<<endl;
+    }
+}

@@ -12,6 +12,7 @@ private:
       Vector3 m_origin_rpy;
       std::string m_meshfile;
 
+
 public:
     Link();             //constructor
     Link(std::string name);
@@ -20,8 +21,9 @@ public:
 
     Vector3 getOrigin_xyz() {return m_origin_xyz;}
     Vector3 getOrigin_rpy() {return m_origin_rpy;}
-    std::string getMeshFile() {return m_meshfile;}
+    std::string getMeshFile();
     std::string getName() {return m_name;}
+    int numberOfVertex = 0;
 };
 
 #endif // LINK_H

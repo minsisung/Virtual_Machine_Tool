@@ -32,14 +32,12 @@ int MachineTool::readURDF(const char* filename){
         cout << "load xml file failed" << endl;
         return res;
     }
-    XMLElement *robot = doc.RootElement();
-    const XMLAttribute *nameOfRobot = robot->FirstAttribute();
-    cout << "robot "<< nameOfRobot->Name() << ":" << nameOfRobot->Value() << endl << endl;
+    XMLElement *MT = doc.RootElement();
+    const XMLAttribute *nameOfMT = MT->FirstAttribute();
+    cout << "Machine Tool: "<< nameOfMT->Name() << ":" << nameOfMT->Value() << endl << endl;
 
-    QVector<Link> LinkVector;                                            // create a vector for links
+    XMLElement *link_count = MT->FirstChildElement("link");
 
-    XMLElement *link_count = robot->FirstChildElement("link");
-    cout << "Link " << endl;
     while (link_count)
     {
         const XMLAttribute *nameOfLink = link_count->FirstAttribute();
@@ -68,28 +66,14 @@ int MachineTool::readURDF(const char* filename){
         XMLElement *mesh = geometry->FirstChildElement("mesh");
         const XMLAttribute *fileName = mesh->FirstAttribute();
 
-
         Link link_reading(nameOfLink->Value(), xyz_input, rpy_input,fileName->Value());
         LinkVector.push_back(link_reading);                                    //push link into the vector
 
         link_count = link_count->NextSiblingElement("link");                  //move to next sibling element
     }
 
-    for (QVector<Link>::iterator loop = LinkVector.begin();loop != LinkVector.end(); loop++)        //print out all links information
-    {
-        cout <<"Name of the link: "<<loop->getName()<<endl;
-        cout <<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
-        cout <<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
-        cout <<"file path:"<<loop->getMeshFile()<<endl;
-        cout <<"address of the link: "<<loop<<endl<<endl;
-    }
-    cout<<endl;
+    XMLElement *joint = MT->FirstChildElement("joint");
 
-    XMLElement *joint = robot->FirstChildElement("joint");
-
-    QVector<Joint> JointVector;                                              // create a vector for joints
-
-    cout << "joint " << endl;
     while (joint)
     {
         const XMLAttribute *nameOfJoint = joint->FirstAttribute();
@@ -107,7 +91,6 @@ int MachineTool::readURDF(const char* filename){
             JointVector.push_back(joint_reading);                           //push into the joint vector
 
             joint = joint->NextSiblingElement("joint");
-            cout << endl;
             continue;
         }
 
@@ -142,15 +125,6 @@ int MachineTool::readURDF(const char* filename){
     }
 
 
-    for (QVector<Joint>::iterator loop = JointVector.begin();loop != JointVector.end(); loop++)        //print out all links information
-    {
-        cout <<"Name of the Joint: "<<loop->getName()<< "  " <<"Type: " <<loop->getType()<<endl;
-        cout <<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
-        cout <<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
-        cout <<"axis: "<<loop->getAxis().x<<" "<<loop->getAxis().y<<" "<<loop->getAxis().z<<" "<<endl;
-        cout <<"Parent Link Name: "<< loop->getParentLink()->getName()<<" "<< "Parent Link Address: "<<loop->getParentLink()<<endl;
-        cout <<"Child Link Name: "<< loop->getChildLink()->getName()<<" "<<" Child Link Address: "<< loop->getChildLink()<<endl<<endl;
-    }
 
     return 0;
 }
