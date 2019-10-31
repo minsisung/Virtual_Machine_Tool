@@ -32,10 +32,8 @@ SOURCES += \
     machineTool.cpp \
         main.cpp \
         mainwindow.cpp \
-    modelloader.cpp \
         myopenglwidget.cpp \
         readgcode.cpp \
-    test.cpp \
     tinyxml2.cpp
 
 HEADERS += \
@@ -44,11 +42,10 @@ HEADERS += \
         link.h \
         machineTool.h \
         mainwindow.h \
-        modelloader.h \
         myopenglwidget.h \
         readgcode.h \
         shaders.h \
-        test.h \
+        stl_reader.h \
         tinyxml2.h \
         vector3.h
 

@@ -55,7 +55,6 @@ protected:
     //called whenever the widget's dimensions change, and is
     //supplied with the new width and height.
 
-    void createObject(QVector<QString> structureOrder,QVector<float> motionForEachAxis);
     void createURDFObject();
     void moveComponent(const QVector<GLfloat> data, int count);   //need to use pass by reference
 
@@ -68,6 +67,7 @@ protected:
 
 private:
     void setupVertexAttribs();
+    Link *moveChildLink(Link *ChildLink, Joint *joint);
 
     MachineTool MT;
     bool m_core;

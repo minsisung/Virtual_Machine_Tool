@@ -100,6 +100,10 @@ int MachineTool::readURDF(const char* filename){
         Vector3 xyz_input;
         xyz_input.init(xyz->Value());
 
+        xyz_input.x = 1000*xyz_input.x;     //meter to minimeter
+        xyz_input.y = 1000*xyz_input.y;
+        xyz_input.z = 1000*xyz_input.z;
+
         Vector3 rpy_input;
         rpy_input.init(rpy->Value());
 
@@ -117,6 +121,12 @@ int MachineTool::readURDF(const char* filename){
         Joint joint_reading(nameOfJoint->Value(), typeOfJoint->Value(), xyz_input, rpy_input, axis_input,
                             find_link(parent->Value(),LinkVector),find_link(child->Value(),LinkVector));
         JointVector.push_back(joint_reading);                           //push into the joint vector
+
+        joint_reading.getParentLink()->ChildLink = joint_reading.getChildLink();
+        //assign child link to the parent link
+
+        joint_reading.getChildLink()->ParentLink = joint_reading.getParentLink();
+        //assign parent link to the child link
 
         //        cout << limit_lower->Name() << "_limit :" << limit_lower->Value() << endl;
         //        cout << limit_upper->Name() << "_limit:" << limit_upper->Value() << endl << endl;

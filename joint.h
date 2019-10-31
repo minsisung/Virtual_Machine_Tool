@@ -2,6 +2,7 @@
 #define JOINT_H
 #include <QVector3D>
 #include <link.h>
+#include <QMatrix4x4>
 
 class Joint
 {
@@ -22,7 +23,7 @@ public:
     Joint();            //constructor
     Joint(std::string name , std::string type,Link *parent_link,  Link *child_link);
     Joint(std::string name,std::string type, Vector3 origin_xyz,Vector3 origin_rpy, Vector3 axis,
-        Link *parent_link,  Link *child_link);
+          Link *parent_link,  Link *child_link);
     ~Joint(){}
 
     Vector3 getOrigin_xyz() {return m_origin_xyz;}
@@ -32,7 +33,6 @@ public:
     std::string getType() {return m_type;}
     Link* getParentLink() {return m_parent_link;}
     Link* getChildLink() {return m_child_link;}
-
 };
 
 #endif // JOINT_H
