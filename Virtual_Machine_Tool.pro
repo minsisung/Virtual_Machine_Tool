@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    control_panel.cpp \
         creategemoetry.cpp \
     joint.cpp \
     link.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
     tinyxml2.cpp
 
 HEADERS += \
+        control_panel.h \
         creategemoetry.h \
         joint.h \
         link.h \
@@ -47,9 +49,11 @@ HEADERS += \
         shaders.h \
         stl_reader.h \
         tinyxml2.h \
-        vector3.h
+        vector3.h \
+        vectorRGBA.h
 
 FORMS += \
+        control_panel.ui \
         mainwindow.ui
 
 # Default rules for deployment.
@@ -57,9 +61,3 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-win32: LIBS += -L$$PWD/lib/ -lassimp-vc140-mt
-
-
-INCLUDEPATH += C:\Users\simon\Dropbox\QT_Git\Virtual_Machine_Tool\include
-INCLUDEPATH += $$PWD/include
-DEPENDPATH += $$PWD/include

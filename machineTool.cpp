@@ -4,7 +4,8 @@
 #include "joint.h"
 #include "link.h"
 #include <QVector>
-#include "assert.h"
+#include <cassert>
+
 
 using namespace tinyxml2;
 using namespace std;
@@ -12,14 +13,18 @@ using namespace std;
 MachineTool::MachineTool(){}
 
 
-Link* MachineTool::find_link(std::string linkName, QVector<Link> &myVector){               //The function to find the link for joint and return a pointer
+Link* MachineTool::find_link(std::string linkName, QVector<Link> &myVector)
+{               //The function to find the link for joint and return a pointer
 
     for (QVector<Link>::iterator loop = myVector.begin();loop != myVector.end(); loop++)
     {
         if(loop->getName()== linkName)
             return loop;
+
+        if(loop == myVector.end() && myVector.end()->getName() != linkName)//assert  can not find the name
+            assert (false && "Can not find this link in the link vector");
     }
-    assert (true);   //assert  can not find the name
+
     return nullptr;
 }
 
@@ -35,6 +40,7 @@ int MachineTool::readURDF(const char* filename){
     XMLElement *MT = doc.RootElement();
     const XMLAttribute *nameOfMT = MT->FirstAttribute();
     cout << "Machine Tool: "<< nameOfMT->Name() << ":" << nameOfMT->Value() << endl << endl;
+    m_name = nameOfMT->Value();
 
     XMLElement *link_count = MT->FirstChildElement("link");
 
@@ -66,7 +72,15 @@ int MachineTool::readURDF(const char* filename){
         XMLElement *mesh = geometry->FirstChildElement("mesh");
         const XMLAttribute *fileName = mesh->FirstAttribute();
 
-        Link link_reading(nameOfLink->Value(), xyz_input, rpy_input,fileName->Value());
+        XMLElement *material = visual->FirstChildElement("material");
+        XMLElement *color = material->FirstChildElement("color");
+        const XMLAttribute *rgba = color->FirstAttribute();
+
+        VectorRGBA rgba_input;
+        rgba_input.initRGBA(rgba->Value());
+
+        Link link_reading(nameOfLink->Value(), xyz_input, rpy_input,
+                          fileName->Value(), rgba_input);
         LinkVector.push_back(link_reading);                                    //push link into the vector
 
         link_count = link_count->NextSiblingElement("link");                  //move to next sibling element
@@ -93,7 +107,6 @@ int MachineTool::readURDF(const char* filename){
             joint = joint->NextSiblingElement("joint");
             continue;
         }
-
         const XMLAttribute *xyz = origin->FirstAttribute();
         const XMLAttribute *rpy = xyz->Next();
 
@@ -107,11 +120,10 @@ int MachineTool::readURDF(const char* filename){
         Vector3 rpy_input;
         rpy_input.init(rpy->Value());
 
-
         XMLElement *axis = joint->FirstChildElement("axis");           //axis
         const XMLAttribute *axisAttribute = axis->FirstAttribute();
-        //        XMLElement *limit = joint->FirstChildElement("limit");                    //limit   (do it later)
-        //        const XMLAttribute *limit_lower = limit->FirstAttribute();   //lower limit
+        //        XMLElement *limit = joint->FirstChildElement("limit");
+        //        const XMLAttribute *limit_lower = limit->FirstAttribute();   //lower limit  do it later
         //        const XMLAttribute *limit_upper = limit_lower->Next();       //upper limit
 
 
@@ -128,15 +140,26 @@ int MachineTool::readURDF(const char* filename){
         joint_reading.getChildLink()->ParentLink = joint_reading.getParentLink();
         //assign parent link to the child link
 
-        //        cout << limit_lower->Name() << "_limit :" << limit_lower->Value() << endl;
-        //        cout << limit_upper->Name() << "_limit:" << limit_upper->Value() << endl << endl;
-
         joint = joint->NextSiblingElement("joint");  //move to next sibling element
     }
-
-
-
     return 0;
 }
+
+QDebug operator<<(QDebug stream, const MachineTool &MT)
+{
+    stream<< "Machine Tool: "<< MT.m_name<<endl<<endl;
+
+    for (QVector<const Link>::iterator loop = MT.LinkVector.begin();loop != MT.LinkVector.end(); loop++)        //print out all links information
+    {
+        stream<<"Name of the link: "<<QString::fromStdString(loop->getName())<<endl;
+        stream<<"xyz:  "<<loop->getOrigin_xyz().x<<" "<<loop->getOrigin_xyz().y<<" "<<loop->getOrigin_xyz().z<<endl;
+        stream<<"rpy:  "<<loop->getOrigin_rpy().x<<" "<<loop->getOrigin_rpy().y<<" "<<loop->getOrigin_rpy().z<<endl;
+        stream<<"STL file Name:"<<QString::fromStdString(loop->getMeshFile())<<endl<<endl;
+    }
+    return stream;
+}
+
+
+
 
 

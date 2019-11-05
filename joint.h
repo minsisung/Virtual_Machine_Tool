@@ -14,10 +14,8 @@ private:
     Vector3 m_axis;
     Link *m_parent_link;
     Link *m_child_link;
-    double m_lower_limit;
-    double m_upper_limit;
-
-
+    float m_lower_limit;
+    float m_upper_limit;
 
 public:
     Joint();            //constructor
@@ -33,6 +31,8 @@ public:
     std::string getType() {return m_type;}
     Link* getParentLink() {return m_parent_link;}
     Link* getChildLink() {return m_child_link;}
+    float translational_motion = 0.0;
+    float rotational_motion = 0.0;
 };
 
 #endif // JOINT_H

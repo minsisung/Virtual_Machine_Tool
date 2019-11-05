@@ -28,6 +28,7 @@ public:
 
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
+    MachineTool MT;
 
 public slots:
     void setXRotation(int angle);
@@ -67,9 +68,9 @@ protected:
 
 private:
     void setupVertexAttribs();
-    Link *moveChildLink(Link *ChildLink, Joint *joint);
+    Link *moveChildLink(Joint *joint);
 
-    MachineTool MT;
+
     bool m_core;
     int m_xRot;
     int m_yRot;

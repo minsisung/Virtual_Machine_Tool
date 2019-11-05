@@ -153,6 +153,7 @@ void MyOpenGLWidget::initializeGL()
 
     //create machine tool
     MT.readURDF("umc500_report3.urdf");
+    qDebug()<<MT<<endl;
 
     //            cout<<"LINKS: "<<endl;
     //            for (QVector<Link>::iterator loop = MT.LinkVector.begin();loop != MT.LinkVector.end(); loop++)        //print out all links information
@@ -175,7 +176,6 @@ void MyOpenGLWidget::initializeGL()
     //            cout <<"Parent Link Name: "<< loop->getParentLink()->getName()<<" "<< "Parent Link Address: "<<loop->getParentLink()<<endl;
     //            cout <<"Child Link Name: "<< loop->getChildLink()->getName()<<" "<<" Child Link Address: "<< loop->getChildLink()<<endl<<endl;
     //        }
-
     motionForEachAxis<<moveX<<moveY<<moveZ<<moveA<<moveB<<moveC;
     //    read stl for each link from URDF
     for (QVector<Link>::iterator loop = MT.LinkVector.begin();loop != MT.LinkVector.end(); loop++)//print out all links information
@@ -264,8 +264,7 @@ void MyOpenGLWidget::paintGL()
     m_camera.setToIdentity();
     m_camera.translate(m_xTran,m_yTran,m_zTran) ;
 
-    //create object               //base->y->x->a->c   //base->z->spindle
-    //        createObject(structureOrder,motionForEachAxis);
+    //create object
     createURDFObject();
 
     m_program->setUniformValue(m_mvMatrixLoc, m_camera * m_world);
@@ -323,7 +322,6 @@ void MyOpenGLWidget::createURDFObject()
 
     //Set new color for the component
     m_program->setUniformValue(m_colorLoc, m_color);
-
     //draw each link
     for (QVector<Joint>::iterator loop = MT.JointVector.begin();loop != MT.JointVector.end(); loop++) //print out all links information
     {
@@ -341,7 +339,7 @@ void MyOpenGLWidget::createURDFObject()
             //            qDebug() << loop->getParentLink()->numberOfVertex;
             //            qDebug()<<startNubmer<<endl;
 
-            Link *ChildLink = moveChildLink(loop->getChildLink(), loop);
+            Link *ChildLink = moveChildLink(loop);
 
             normalMatrix = (ChildLink->m_TransformMatrix).normalMatrix();
             m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
@@ -354,10 +352,7 @@ void MyOpenGLWidget::createURDFObject()
             //            qDebug()<<startNubmer<<endl;
             continue;
         }
-
-        Link *ParentLink = loop->getParentLink();
-
-        Link *ChildLink = moveChildLink(loop->getChildLink(), loop);
+        Link *ChildLink = moveChildLink(loop);
 
         normalMatrix = (ChildLink->m_TransformMatrix).normalMatrix();
         m_program->setUniformValue(m_normalMatrixLoc, normalMatrix);
@@ -381,21 +376,22 @@ void MyOpenGLWidget::resizeGL(int w, int h)
     //aspectRatio, float nearPlane, float farPlane);
 }
 
-Link *MyOpenGLWidget::moveChildLink(Link *ChildLink, Joint *joint)
+Link *MyOpenGLWidget::moveChildLink(Joint *joint)
 {
+    Link *ParentLink = joint->getParentLink();
+    Link *ChildLink = joint->getChildLink();
+
     if (joint->getType() == "prismatic")
     {
-        Link *ParentLink = joint->getParentLink();
         ChildLink->m_TransformMatrix = ParentLink->m_TransformMatrix;
         ChildLink->m_TransformMatrix.translate(joint->getOrigin_xyz().x,joint->getOrigin_xyz().y,joint->getOrigin_xyz().z);
         joint->getAxis();
-        ChildLink->m_TransformMatrix.translate(joint->getAxis().x*motionForEachAxis.at(1)
-                                               ,joint->getAxis().y*motionForEachAxis.at(1),joint->getAxis().z*motionForEachAxis.at(1));
+        ChildLink->m_TransformMatrix.translate(joint->getAxis().x * joint->translational_motion
+                                               ,joint->getAxis().y * joint->translational_motion,joint->getAxis().z * joint->translational_motion);
     }
 
     if (joint->getType() == "fixed")
     {
-        Link *ParentLink = joint->getParentLink();
         ChildLink->m_TransformMatrix = ParentLink->m_TransformMatrix;
         ChildLink->m_TransformMatrix.translate(joint->getOrigin_xyz().x,joint->getOrigin_xyz().y,joint->getOrigin_xyz().z);
 
@@ -403,12 +399,14 @@ Link *MyOpenGLWidget::moveChildLink(Link *ChildLink, Joint *joint)
 
     if (joint->getType() == "revolute")
     {
-        Link *ParentLink = joint->getParentLink();
         ChildLink->m_TransformMatrix = ParentLink->m_TransformMatrix;
         ChildLink->m_TransformMatrix.translate(joint->getOrigin_xyz().x,joint->getOrigin_xyz().y,joint->getOrigin_xyz().z);
         joint->getAxis();
-        ChildLink->m_TransformMatrix.rotate(motionForEachAxis.at(5), joint->getAxis().x
-                                            ,joint->getAxis().y,joint->getAxis().z);      //?????????????
+/*        ChildLink->m_TransformMatrix.rotate(motionForEachAxis.at(5), joint->getAxis().x
+                                            ,joint->getAxis().y,joint->getAxis().z);  */    //?????????????
+                ChildLink->m_TransformMatrix.rotate(joint->rotational_motion, joint->getAxis().x
+                                                    ,joint->getAxis().y,joint->getAxis().z);
+
     }
     return ChildLink;
 }
@@ -521,57 +519,53 @@ void MyOpenGLWidget::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_Up:
         moveY+=5;
-        motionForEachAxis[1]=moveY;
+        MT.JointVector[4].translational_motion = moveY;
         update();
         break;
     case Qt::Key_Down:
         moveY-=5;
-        motionForEachAxis[1]=moveY;
+        MT.JointVector[4].translational_motion = moveY;
         update();
         break;
     case Qt::Key_Left:
         moveX-=5;
-        motionForEachAxis[0]=moveX;
+        MT.JointVector[3].translational_motion = moveX;
         update();
         break;
     case Qt::Key_Right:
         moveX+=5;
-        motionForEachAxis[0]=moveX;
+        MT.JointVector[3].translational_motion = moveX;
         update();
         break;
 
     case Qt::Key_W:
         moveA+=5;
-        motionForEachAxis[3]=moveA;
+        MT.JointVector[0].rotational_motion = moveA;
         update();
         break;
     case Qt::Key_S:
         moveA-=5;
-        motionForEachAxis[3]=moveA;
+        MT.JointVector[0].rotational_motion = moveA;
         update();
         break;
     case Qt::Key_A:
         moveC-=5;
-        motionForEachAxis[5]=moveC;
-        moveB-=5;
-        motionForEachAxis[4]=moveB;
+        MT.JointVector[1].rotational_motion = moveC;
         update();
         break;
     case Qt::Key_D:
         moveC+=5;
-        motionForEachAxis[5]=moveC;
-        moveB+=5;
-        motionForEachAxis[4]=moveB;
+        MT.JointVector[1].rotational_motion = moveC;
         update();
         break;
     case Qt::Key_O:
         moveZ+=5;
-        motionForEachAxis[2]=moveZ;
+        MT.JointVector[5].translational_motion = moveZ;
         update();
         break;
     case Qt::Key_L:
         moveZ-=5;
-        motionForEachAxis[2]=moveZ;
+        MT.JointVector[5].translational_motion = moveZ;
         update();
         break;
     }

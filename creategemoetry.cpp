@@ -6,7 +6,6 @@
 #include<stl_reader.h>
 #include<iostream>
 
-
 CreateGemoetry::CreateGemoetry():
     m_totalCount(0),
 
